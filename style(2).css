@@ -1,9 +1,0 @@
-:root{--cyan:#AEEAF5;--mag:#F6B8D7;--yel:#FFF2A8;--bg:#f8f9fb}
-*{box-sizing:border-box;font-family:Yu Gothic,sans-serif}body{margin:0;background:var(--bg);color:#444}
-header{background:#fff;border-bottom:5px solid var(--cyan);padding:18px;display:flex;gap:10px;align-items:center;position:sticky;top:0}
-h1{margin:0;font-size:28px}#search{flex:1;padding:10px;border:1px solid #ddd;border-radius:999px}
-#add{background:var(--yel);border:none;border-radius:999px;padding:10px 16px}
-#notes{padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
-.card{background:#fff;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,.08);padding:18px}
-.title,.text{width:100%;border:none;outline:none}.title{font-size:18px;font-weight:bold}.text{min-height:120px;resize:vertical}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.tools button{border:none;border-radius:999px;padding:8px 12px}.pin{background:var(--cyan)}.mv{background:var(--yel)}.del{background:var(--mag)}img{width:100%;margin-top:8px;border-radius:12px}
