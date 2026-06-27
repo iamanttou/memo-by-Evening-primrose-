@@ -1,74 +1,73 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>PastelMemo</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <!-- ヘッダー -->
+    <!-- ===== ヘッダー ===== -->
     <header>
-        <h1>📒 PastelMemo</h1>
 
-        <div class="search">
-            <input type="text" placeholder="🔍 メモを検索...">
+        <div class="logo">
+            📒 <span>PastelMemo</span>
         </div>
 
-        <button id="menuBtn">☰</button>
+        <div class="searchBox">
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="🔍 メモを検索..."
+            >
+        </div>
+
+        <button id="menuBtn" title="メニュー">
+            ☰
+        </button>
+
     </header>
 
-    <!-- メイン -->
+    <!-- ===== メイン ===== -->
     <main>
 
-        <!-- 左：編集 -->
+        <!-- ========================= -->
+        <!-- 左側 編集エリア -->
+        <!-- ========================= -->
         <section id="editor">
 
-            <input
-                id="title"
-                type="text"
-                placeholder="タイトル">
+            <div class="editorHeader">
 
-            <textarea
-                id="content"
-                placeholder="ここにメモを書く..."></textarea>
+                <input
+                    id="title"
+                    type="text"
+                    placeholder="タイトル"
+                    maxlength="100"
+                >
 
-            <div class="tools">
+                <div class="editorButtons">
 
-                <button>📷 画像</button>
-                <button>✏️ 手書き</button>
-                <button># タグ</button>
-                <button>🔗 リンク</button>
+                    <button id="newNoteBtn">
+                        ➕ 新しいメモ
+                    </button>
+
+                    <button id="favoriteBtn">
+                        ⭐
+                    </button>
+
+                    <button id="pinBtn">
+                        📌
+                    </button>
+
+                </div>
 
             </div>
 
-        </section>
-
-        <!-- 右：フォルダ -->
-<aside id="sidebar">
-
-    <div id="sortBar">
-        <select id="sortSelect">
-            <option value="manual">⇅ 手動</option>
-            <option value="name">名前順</option>
-            <option value="new">新しい順</option>
-            <option value="old">古い順</option>
-        </select>
-    </div>
-
-    <div id="folders">
-        <!-- JavaScriptがここにフォルダを生成 -->
-    </div>
-
-    <button id="newFolder">
-        ＋ フォルダを作成
-    </button>
-
-        </aside>
-
-    </main>
-
-</body>
-</html>
+            <textarea
+                id="content"
+                placeholder="ここにメモを書こう
