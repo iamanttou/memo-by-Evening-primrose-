@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PastelMemo</title>
 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <h1>📒 PastelMemo</h1>
+
+        <div class="search">
+            <input type="text" placeholder="🔍 メモを検索...">
+        </div>
+
+        <button id="menuBtn">☰</button>
+    </header>
+
+    <!-- メイン -->
+    <main>
+
+        <!-- 左：編集 -->
+        <section id="editor">
+
+            <input
+                id="title"
+                type="text"
+                placeholder="タイトル">
+
+            <textarea
+                id="content"
+                placeholder="ここにメモを書く..."></textarea>
+
+            <div class="tools">
+
+                <button>📷 画像</button>
+                <button>✏️ 手書き</button>
+                <button># タグ</button>
+                <button>🔗 リンク</button>
+
+            </div>
+
+        </section>
+
+        <!-- 右：フォルダ -->
+        <aside id="sidebar">
+
+            <div id="sortBar">
+                <button>⇅ 並べ替え</button>
+            </div>
+
+            <div id="folders">
+
+                <details open>
+
+                    <summary>🟥 創作</summary>
+
+                    <div class="note">📄 魔法設定</div>
+                    <div class="note">📄 世界観</div>
+
+                </details>
+
+                <details>
+
+                    <summary>🟦 学校</summary>
+
+                    <div class="note">📄 数学</div>
+                    <div class="note">📄 英語</div>
+
+                </details>
+
+                <details>
+
+                    <summary>🟨 日記</summary>
+
+                    <div class="note">📄 2026/06/28</div>
+
+                </details>
+
+            </div>
+
+            <button id="newFolder">
+                ＋ フォルダを作成
+            </button>
+
+        </aside>
+
+    </main>
+
+</body>
+</html>
