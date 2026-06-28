@@ -61,8 +61,52 @@
                     </button>
 
                     <button id="pinBtn">
-                        📌
-                    </button>
+                <!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PastelMemo</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダー ===== -->
+    <header>
+
+        <div class="logo">
+            📒 PastelMemo
+        </div>
+
+        <div class="searchBox">
+            <input id="searchInput" type="text" placeholder="メモを検索...">
+        </div>
+
+        <button id="menuBtn">☰</button>
+
+    </header>
+
+    <!-- ===== メイン ===== -->
+    <main>
+
+        <!-- ===== 左：エディタ ===== -->
+        <section id="editor">
+
+            <div class="editorHeader">
+
+                <input id="title" type="text" placeholder="タイトル">
+
+                <div class="editorButtons">
+
+                    <button id="newNoteBtn">➕</button>
+
+                    <button id="favoriteBtn">⭐</button>
+
+                    <button id="pinBtn">📌</button>
 
                 </div>
 
@@ -70,4 +114,35 @@
 
             <textarea
                 id="content"
-                placeholder="ここにメモを書こう
+                placeholder="ここにメモを書こう"
+            ></textarea>
+
+        </section>
+
+        <!-- ===== 右：フォルダ ===== -->
+        <aside id="sidebar">
+
+            <div class="sidebarTop">
+
+                <select id="sortSelect">
+                    <option value="name">名前順</option>
+                </select>
+
+            </div>
+
+            <div id="folderList"></div>
+
+            <div class="sidebarBottom">
+
+                <button id="newFolderBtn">＋ フォルダ追加</button>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
