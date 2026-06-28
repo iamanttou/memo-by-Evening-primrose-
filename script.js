@@ -1,20 +1,15 @@
 
 /* =========================
-   PastelMemo v0.2
-   script.js (Part 1)
-   - データ管理
-   - フォルダ
-   - メモ基盤
+   PastelMemo v0.5
+   script.js
 ========================= */
 
-/* ===== DOM取得 ===== */
+/* ===== DOM ===== */
 
 const titleInput = document.getElementById("title");
 const contentInput = document.getElementById("content");
 const folderList = document.getElementById("folderList");
 const searchInput = document.getElementById("searchInput");
-
-/* ===== 状態管理 ===== */
 
 let state = {
     folders: [],
@@ -22,76 +17,33 @@ let state = {
     currentNoteId: null
 };
 
-/* ===== 初期化 ===== */
-
-function init(){
-
-    loadData();
-
-    if(state.folders.length === 0){
-        createDefaultData();
-    }
-
-    renderFolders();
-
-}
+/* =========================
+   初期化
+========================= */
 
 init();
 
-/* ===== デフォルトデータ ===== */
-
-function createDefaultData(){
-
-    state.folders = [
-        {
-            id: crypto.randomUUID(),
-            name: "🟥 創作",
-            notes: [
-                {
-                    id: crypto.randomUUID(),
-                    title: "魔法設定",
-                    content: "ここに魔法の設定を書く",
-                    updatedAt: Date.now()
-                }
-            ]
-        },
-        {
-            id: crypto.randomUUID(),
-            name: "🟦 学校",
-            notes: [
-                {
-                    id: crypto.randomUUID(),
-                    title: "数学",
-                    content: "授業メモ",
-                    updatedAt: Date.now()
-                }
-            ]
-        }
-    ];
-
-    saveData();
-
+function init(){
+    loadData();
+    renderFolders();
 }
 
-/* ===== 保存 ===== */
+/* =========================
+   保存
+========================= */
 
 function saveData(){
     localStorage.setItem("pastelmemo", JSON.stringify(state));
 }
 
-/* ===== 読み込み ===== */
-
 function loadData(){
-
     const data = localStorage.getItem("pastelmemo");
-
-    if(data){
-        state = JSON.parse(data);
-    }
-
+    if(data) state = JSON.parse(data);
 }
 
-/* ===== フォルダ描画 ===== */
+/* =========================
+   フォルダ描画
+========================= */
 
 function renderFolders(){
 
@@ -105,21 +57,20 @@ function renderFolders(){
         const summary = document.createElement("summary");
         summary.textContent = folder.name;
 
-        summary.onclick = () => {
-            toggleFolder(folder.id);
-        };
-
         details.appendChild(summary);
 
         folder.notes.forEach(note => {
 
             const div = document.createElement("div");
             div.className = "noteItem";
-            div.textContent = "📄 " + note.title;
 
-            div.onclick = () => {
-                openNote(folder.id, note.id);
-            };
+            div.innerHTML = `
+                📄 ${note.title}
+                ${note.image ? "🖼" : ""}
+                ${note.canvas ? "✏" : ""}
+            `;
+
+            div.onclick = () => openNote(folder.id, note.id);
 
             details.appendChild(div);
 
@@ -131,26 +82,15 @@ function renderFolders(){
 
 }
 
-/* ===== フォルダ開閉 ===== */
-
-function toggleFolder(folderId){
-
-    const folder = state.folders.find(f => f.id === folderId);
-
-    if(!folder) return;
-
-    // 何もしなくてもdetailsが開閉するので将来拡張用
-
-}
-
-/* ===== メモを開く ===== */
+/* =========================
+   メモを開く
+========================= */
 
 function openNote(folderId, noteId){
 
     const folder = state.folders.find(f => f.id === folderId);
-    if(!folder) return;
+    const note = folder?.notes.find(n => n.id === noteId);
 
-    const note = folder.notes.find(n => n.id === noteId);
     if(!note) return;
 
     state.currentFolderId = folderId;
@@ -162,116 +102,151 @@ function openNote(folderId, noteId){
 }
 
 /* =========================
-   PastelMemo v0.2
-   script.js (Part 2)
-   - 編集
-   - 自動保存
-   - 新規メモ
-   - 新規フォルダ
-========================= */
-
-/* ===== 現在開いてるメモ ===== */
-
-let currentFolder = null;
-let currentNote = null;
-
-/* =========================
-   新規メモ作成
-========================= */
-
-document.getElementById("newNoteBtn").onclick = () => {
-
-    if(state.folders.length === 0) return;
-
-    const folder = state.folders[0]; // とりあえず先頭フォルダ
-
-    const newNote = {
-        id: crypto.randomUUID(),
-        title: "無題",
-        content: "",
-        updatedAt: Date.now()
-    };
-
-    folder.notes.unshift(newNote);
-
-    saveData();
-    renderFolders();
-
-    openNote(folder.id, newNote.id);
-
-};
-
-/* =========================
-   フォルダ追加
-========================= */
-
-document.getElementById("newFolderBtn").onclick = () => {
-
-    const name = prompt("フォルダ名を入力してね");
-
-    if(!name) return;
-
-    const newFolder = {
-        id: crypto.randomUUID(),
-        name: "📁 " + name,
-        notes: []
-    };
-
-    state.folders.push(newFolder);
-
-    saveData();
-    renderFolders();
-
-};
-
-/* =========================
-   編集 → 自動保存
+   自動保存
 ========================= */
 
 function autoSave(){
 
-    if(!state.currentFolderId || !state.currentNoteId) return;
-
     const folder = state.folders.find(f => f.id === state.currentFolderId);
-    if(!folder) return;
+    const note = folder?.notes.find(n => n.id === state.currentNoteId);
 
-    const note = folder.notes.find(n => n.id === state.currentNoteId);
     if(!note) return;
 
     note.title = titleInput.value;
     note.content = contentInput.value;
-    note.updatedAt = Date.now();
 
     saveData();
     renderFolders();
 
 }
 
-/* ===== 入力イベント ===== */
-
 titleInput.addEventListener("input", autoSave);
 contentInput.addEventListener("input", autoSave);
 
 /* =========================
-   検索（超シンプル版）
+   🖼 画像アップロード
+========================= */
+
+const imageInput = document.createElement("input");
+imageInput.type = "file";
+imageInput.accept = "image/*";
+
+imageInput.onchange = () => {
+
+    const file = imageInput.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+        const folder = state.folders.find(f => f.id === state.currentFolderId);
+        const note = folder?.notes.find(n => n.id === state.currentNoteId);
+
+        if(!note) return;
+
+        note.image = reader.result; // base64
+
+        saveData();
+        renderFolders();
+
+    };
+
+    reader.readAsDataURL(file);
+
+};
+
+document.getElementById("imageBtn")?.addEventListener("click", () => {
+    imageInput.click();
+});
+
+/* =========================
+   ✏ 手書きキャンバス
+========================= */
+
+let canvas, ctx, drawing = false;
+
+function initCanvas(){
+
+    canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 200;
+    canvas.style.border = "1px solid #ddd";
+
+    ctx = canvas.getContext("2d");
+
+    canvas.onmousedown = () => drawing = true;
+    canvas.onmouseup = () => drawing = false;
+
+    canvas.onmousemove = (e) => {
+
+        if(!drawing) return;
+
+        ctx.fillStyle = "#000";
+        ctx.beginPath();
+        ctx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI*2);
+        ctx.fill();
+
+    };
+
+}
+
+/* =========================
+   手書き保存
+========================= */
+
+function saveCanvas(){
+
+    const folder = state.folders.find(f => f.id === state.currentFolderId);
+    const note = folder?.notes.find(n => n.id === state.currentNoteId);
+
+    if(!note) return;
+
+    note.canvas = canvas.toDataURL();
+
+    saveData();
+    renderFolders();
+
+}
+
+/* =========================
+   検索
 ========================= */
 
 searchInput.addEventListener("input", (e) => {
 
     const q = e.target.value.toLowerCase();
 
-    const items = document.querySelectorAll(".noteItem");
+    document.querySelectorAll(".noteItem").forEach(el => {
 
-    items.forEach(el => {
-
-        const text = el.textContent.toLowerCase();
-
-        if(text.includes(q)){
-            el.style.display = "block";
-        } else {
-            el.style.display = "none";
-        }
+        el.style.display = el.textContent.toLowerCase().includes(q)
+            ? "block"
+            : "none";
 
     });
 
 });
+
+/* =========================
+   新規メモ
+========================= */
+
+document.getElementById("newNoteBtn").onclick = () => {
+
+    const folder = state.folders[0];
+    if(!folder) return;
+
+    const note = {
+        id: crypto.randomUUID(),
+        title: "無題",
+        content: "",
+        image: null,
+        canvas: null
+    };
+
+    folder.notes.unshift(note);
+
+    saveData();
+    renderFolders();
+
+};
