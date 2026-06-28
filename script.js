@@ -1,7 +1,7 @@
 
 /* =========================
-   PastelMemo v0.6
-   script.js
+   PastelMemo v1.0
+   FINAL SCRIPT
 ========================= */
 
 /* ===== DOM ===== */
@@ -18,9 +18,7 @@ let state = {
     currentFolderId: null,
     currentNoteId: null,
     recent: [],
-    stats: {
-        totalNotes: 0
-    }
+    trash: []
 };
 
 /* =========================
@@ -31,7 +29,6 @@ init();
 
 function init(){
     loadData();
-    updateStats();
     renderFolders();
 }
 
@@ -41,32 +38,17 @@ function init(){
 
 function saveData(){
     localStorage.setItem("pastelmemo", JSON.stringify(state));
-    updateStats();
 }
 
 function loadData(){
     const data = localStorage.getItem("pastelmemo");
-    if(data) state = JSON.parse(data);
+    if(data){
+        state = JSON.parse(data);
+    }
 }
 
 /* =========================
-   統計
-========================= */
-
-function updateStats(){
-
-    let count = 0;
-
-    state.folders.forEach(f => {
-        count += f.notes.length;
-    });
-
-    state.stats.totalNotes = count;
-
-}
-
-/* =========================
-   フォルダ描画
+   フォルダ描画（完成版）
 ========================= */
 
 function renderFolders(){
@@ -83,7 +65,15 @@ function renderFolders(){
 
         details.appendChild(summary);
 
-        folder.notes.forEach(note => {
+        const notes = [...folder.notes];
+
+        // ピン優先 + 更新順
+        notes.sort((a,b)=>
+            (b.pinned - a.pinned) ||
+            (b.updatedAt - a.updatedAt)
+        );
+
+        notes.forEach(note => {
 
             const div = document.createElement("div");
             div.className = "noteItem";
@@ -91,11 +81,17 @@ function renderFolders(){
             div.innerHTML =
                 (note.pinned ? "📌 " : "") +
                 (note.favorite ? "⭐ " : "") +
-                "📄 " + note.title;
+                "📄 " +
+                note.title;
 
             div.onclick = () => {
                 openNote(folder.id, note.id);
                 addRecent(note);
+            };
+
+            div.oncontextmenu = (e) => {
+                e.preventDefault();
+                toggleFavorite(note);
             };
 
             details.appendChild(div);
@@ -128,7 +124,7 @@ function openNote(folderId, noteId){
 }
 
 /* =========================
-   自動保存
+   自動保存（完成版）
 ========================= */
 
 function autoSave(){
@@ -147,25 +143,11 @@ function autoSave(){
 
 }
 
-/* =========================
-   最近のメモ
-========================= */
-
-function addRecent(note){
-
-    state.recent.unshift({
-        id: note.id,
-        title: note.title
-    });
-
-    state.recent = state.recent.slice(0, 10);
-
-    saveData();
-
-}
+titleInput.addEventListener("input", autoSave);
+contentInput.addEventListener("input", autoSave);
 
 /* =========================
-   新規メモ（テンプレ対応）
+   新規メモ
 ========================= */
 
 document.getElementById("newNoteBtn").onclick = () => {
@@ -191,29 +173,109 @@ document.getElementById("newNoteBtn").onclick = () => {
 };
 
 /* =========================
-   テンプレート（超簡易）
+   新規フォルダ
 ========================= */
 
-function insertTemplate(type){
+document.getElementById("newFolderBtn").onclick = () => {
 
-    let text = "";
+    const name = prompt("フォルダ名");
 
-    if(type === "todo"){
-        text = "- [ ] タスク1\n- [ ] タスク2\n- [ ] タスク3";
-    }
+    if(!name) return;
 
-    if(type === "diary"){
-        text = "📅 今日の出来事\n\n感じたこと：\n";
-    }
+    state.folders.push({
+        id: crypto.randomUUID(),
+        name: "📁 " + name,
+        notes: []
+    });
 
-    contentInput.value += text;
+    saveData();
+    renderFolders();
 
-    autoSave();
+};
+
+/* =========================
+   ⭐ お気に入り
+========================= */
+
+function toggleFavorite(note){
+
+    note.favorite = !note.favorite;
+
+    saveData();
+    renderFolders();
 
 }
 
 /* =========================
-   ショートカット
+   📌 ピン
+========================= */
+
+function togglePin(note){
+
+    note.pinned = !note.pinned;
+
+    saveData();
+    renderFolders();
+
+}
+
+/* =========================
+   🗑 ゴミ箱
+========================= */
+
+function deleteNote(folderId, noteId){
+
+    const folder = state.folders.find(f => f.id === folderId);
+    if(!folder) return;
+
+    const index = folder.notes.findIndex(n => n.id === noteId);
+
+    if(index === -1) return;
+
+    const [removed] = folder.notes.splice(index, 1);
+
+    state.trash.push(removed);
+
+    saveData();
+    renderFolders();
+
+}
+
+/* =========================
+   🧠 最近のメモ
+========================= */
+
+function addRecent(note){
+
+    state.recent.unshift(note);
+
+    state.recent = state.recent.slice(0, 10);
+
+    saveData();
+
+}
+
+/* =========================
+   🔍 検索
+========================= */
+
+searchInput.addEventListener("input", (e) => {
+
+    const q = e.target.value.toLowerCase();
+
+    document.querySelectorAll(".noteItem").forEach(el => {
+
+        el.style.display =
+            el.textContent.toLowerCase().includes(q)
+            ? "block"
+            : "none";
+
+    });
+
+});
+
+/* =========================
+   🧠 キーボードショートカット
 ========================= */
 
 document.addEventListener("keydown", (e) => {
@@ -227,23 +289,5 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         document.getElementById("newNoteBtn").click();
     }
-
-});
-
-/* =========================
-   検索
-========================= */
-
-searchInput.addEventListener("input", (e) => {
-
-    const q = e.target.value.toLowerCase();
-
-    document.querySelectorAll(".noteItem").forEach(el => {
-
-        el.style.display = el.textContent.toLowerCase().includes(q)
-            ? "block"
-            : "none";
-
-    });
 
 });
