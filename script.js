@@ -10,6 +10,8 @@ const titleInput = document.getElementById("title");
 const contentInput = document.getElementById("content");
 const folderList = document.getElementById("folderList");
 const searchInput = document.getElementById("searchInput");
+const newNoteBtn = document.getElementById("newNoteBtn");
+const newFolderBtn = document.getElementById("newFolderBtn");
 
 /* ===== 状態 ===== */
 
@@ -29,7 +31,29 @@ init();
 
 function init(){
     loadData();
+
+    if(state.folders.length === 0){
+        createDefault();
+    }
+
     renderFolders();
+}
+
+/* =========================
+   デフォルトデータ
+========================= */
+
+function createDefault(){
+
+    state.folders = [
+        {
+            id: crypto.randomUUID(),
+            name: "📁 メイン",
+            notes: []
+        }
+    ];
+
+    saveData();
 }
 
 /* =========================
@@ -48,7 +72,7 @@ function loadData(){
 }
 
 /* =========================
-   フォルダ描画（完成版）
+   フォルダ描画
 ========================= */
 
 function renderFolders(){
@@ -65,33 +89,18 @@ function renderFolders(){
 
         details.appendChild(summary);
 
-        const notes = [...folder.notes];
-
-        // ピン優先 + 更新順
-        notes.sort((a,b)=>
-            (b.pinned - a.pinned) ||
-            (b.updatedAt - a.updatedAt)
-        );
-
-        notes.forEach(note => {
+        folder.notes.forEach(note => {
 
             const div = document.createElement("div");
             div.className = "noteItem";
 
-            div.innerHTML =
+            div.textContent =
                 (note.pinned ? "📌 " : "") +
                 (note.favorite ? "⭐ " : "") +
-                "📄 " +
                 note.title;
 
             div.onclick = () => {
                 openNote(folder.id, note.id);
-                addRecent(note);
-            };
-
-            div.oncontextmenu = (e) => {
-                e.preventDefault();
-                toggleFavorite(note);
             };
 
             details.appendChild(div);
@@ -124,7 +133,7 @@ function openNote(folderId, noteId){
 }
 
 /* =========================
-   自動保存（完成版）
+   自動保存
 ========================= */
 
 function autoSave(){
@@ -150,7 +159,7 @@ contentInput.addEventListener("input", autoSave);
    新規メモ
 ========================= */
 
-document.getElementById("newNoteBtn").onclick = () => {
+newNoteBtn.onclick = () => {
 
     const folder = state.folders[0];
     if(!folder) return;
@@ -176,7 +185,7 @@ document.getElementById("newNoteBtn").onclick = () => {
    新規フォルダ
 ========================= */
 
-document.getElementById("newFolderBtn").onclick = () => {
+newFolderBtn.onclick = () => {
 
     const name = prompt("フォルダ名");
 
@@ -194,69 +203,7 @@ document.getElementById("newFolderBtn").onclick = () => {
 };
 
 /* =========================
-   ⭐ お気に入り
-========================= */
-
-function toggleFavorite(note){
-
-    note.favorite = !note.favorite;
-
-    saveData();
-    renderFolders();
-
-}
-
-/* =========================
-   📌 ピン
-========================= */
-
-function togglePin(note){
-
-    note.pinned = !note.pinned;
-
-    saveData();
-    renderFolders();
-
-}
-
-/* =========================
-   🗑 ゴミ箱
-========================= */
-
-function deleteNote(folderId, noteId){
-
-    const folder = state.folders.find(f => f.id === folderId);
-    if(!folder) return;
-
-    const index = folder.notes.findIndex(n => n.id === noteId);
-
-    if(index === -1) return;
-
-    const [removed] = folder.notes.splice(index, 1);
-
-    state.trash.push(removed);
-
-    saveData();
-    renderFolders();
-
-}
-
-/* =========================
-   🧠 最近のメモ
-========================= */
-
-function addRecent(note){
-
-    state.recent.unshift(note);
-
-    state.recent = state.recent.slice(0, 10);
-
-    saveData();
-
-}
-
-/* =========================
-   🔍 検索
+   検索
 ========================= */
 
 searchInput.addEventListener("input", (e) => {
@@ -271,23 +218,5 @@ searchInput.addEventListener("input", (e) => {
             : "none";
 
     });
-
-});
-
-/* =========================
-   🧠 キーボードショートカット
-========================= */
-
-document.addEventListener("keydown", (e) => {
-
-    if(e.ctrlKey && e.key === "s"){
-        e.preventDefault();
-        autoSave();
-    }
-
-    if(e.ctrlKey && e.key === "n"){
-        e.preventDefault();
-        document.getElementById("newNoteBtn").click();
-    }
 
 });
