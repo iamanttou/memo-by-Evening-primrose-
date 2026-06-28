@@ -160,3 +160,118 @@ function openNote(folderId, noteId){
     contentInput.value = note.content;
 
 }
+
+/* =========================
+   PastelMemo v0.2
+   script.js (Part 2)
+   - 編集
+   - 自動保存
+   - 新規メモ
+   - 新規フォルダ
+========================= */
+
+/* ===== 現在開いてるメモ ===== */
+
+let currentFolder = null;
+let currentNote = null;
+
+/* =========================
+   新規メモ作成
+========================= */
+
+document.getElementById("newNoteBtn").onclick = () => {
+
+    if(state.folders.length === 0) return;
+
+    const folder = state.folders[0]; // とりあえず先頭フォルダ
+
+    const newNote = {
+        id: crypto.randomUUID(),
+        title: "無題",
+        content: "",
+        updatedAt: Date.now()
+    };
+
+    folder.notes.unshift(newNote);
+
+    saveData();
+    renderFolders();
+
+    openNote(folder.id, newNote.id);
+
+};
+
+/* =========================
+   フォルダ追加
+========================= */
+
+document.getElementById("newFolderBtn").onclick = () => {
+
+    const name = prompt("フォルダ名を入力してね");
+
+    if(!name) return;
+
+    const newFolder = {
+        id: crypto.randomUUID(),
+        name: "📁 " + name,
+        notes: []
+    };
+
+    state.folders.push(newFolder);
+
+    saveData();
+    renderFolders();
+
+};
+
+/* =========================
+   編集 → 自動保存
+========================= */
+
+function autoSave(){
+
+    if(!state.currentFolderId || !state.currentNoteId) return;
+
+    const folder = state.folders.find(f => f.id === state.currentFolderId);
+    if(!folder) return;
+
+    const note = folder.notes.find(n => n.id === state.currentNoteId);
+    if(!note) return;
+
+    note.title = titleInput.value;
+    note.content = contentInput.value;
+    note.updatedAt = Date.now();
+
+    saveData();
+    renderFolders();
+
+}
+
+/* ===== 入力イベント ===== */
+
+titleInput.addEventListener("input", autoSave);
+contentInput.addEventListener("input", autoSave);
+
+/* =========================
+   検索（超シンプル版）
+========================= */
+
+searchInput.addEventListener("input", (e) => {
+
+    const q = e.target.value.toLowerCase();
+
+    const items = document.querySelectorAll(".noteItem");
+
+    items.forEach(el => {
+
+        const text = el.textContent.toLowerCase();
+
+        if(text.includes(q)){
+            el.style.display = "block";
+        } else {
+            el.style.display = "none";
+        }
+
+    });
+
+});
