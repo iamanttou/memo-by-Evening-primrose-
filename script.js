@@ -1,89 +1,162 @@
-// ==========================
-// PastelMemo
-// script.js Part2
-// ==========================
 
-// フォルダ一覧
-let folders = JSON.parse(localStorage.getItem("folders")) || [
-    {
-        id: crypto.randomUUID(),
-        name: "創作",
-        color: "🟥",
-        notes: []
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "学校",
-        color: "🟦",
-        notes: []
+/* =========================
+   PastelMemo v0.2
+   script.js (Part 1)
+   - データ管理
+   - フォルダ
+   - メモ基盤
+========================= */
+
+/* ===== DOM取得 ===== */
+
+const titleInput = document.getElementById("title");
+const contentInput = document.getElementById("content");
+const folderList = document.getElementById("folderList");
+const searchInput = document.getElementById("searchInput");
+
+/* ===== 状態管理 ===== */
+
+let state = {
+    folders: [],
+    currentFolderId: null,
+    currentNoteId: null
+};
+
+/* ===== 初期化 ===== */
+
+function init(){
+
+    loadData();
+
+    if(state.folders.length === 0){
+        createDefaultData();
     }
-];
 
-// 保存
-function saveFolders() {
-    localStorage.setItem("folders", JSON.stringify(folders));
+    renderFolders();
+
 }
 
-// 描画
-function renderFolders() {
+init();
 
-    const container = document.getElementById("folders");
+/* ===== デフォルトデータ ===== */
 
-    container.innerHTML = "";
+function createDefaultData(){
 
-    folders.forEach(folder => {
+    state.folders = [
+        {
+            id: crypto.randomUUID(),
+            name: "🟥 創作",
+            notes: [
+                {
+                    id: crypto.randomUUID(),
+                    title: "魔法設定",
+                    content: "ここに魔法の設定を書く",
+                    updatedAt: Date.now()
+                }
+            ]
+        },
+        {
+            id: crypto.randomUUID(),
+            name: "🟦 学校",
+            notes: [
+                {
+                    id: crypto.randomUUID(),
+                    title: "数学",
+                    content: "授業メモ",
+                    updatedAt: Date.now()
+                }
+            ]
+        }
+    ];
+
+    saveData();
+
+}
+
+/* ===== 保存 ===== */
+
+function saveData(){
+    localStorage.setItem("pastelmemo", JSON.stringify(state));
+}
+
+/* ===== 読み込み ===== */
+
+function loadData(){
+
+    const data = localStorage.getItem("pastelmemo");
+
+    if(data){
+        state = JSON.parse(data);
+    }
+
+}
+
+/* ===== フォルダ描画 ===== */
+
+function renderFolders(){
+
+    folderList.innerHTML = "";
+
+    state.folders.forEach(folder => {
 
         const details = document.createElement("details");
         details.open = true;
 
         const summary = document.createElement("summary");
-        summary.textContent = `${folder.color} ${folder.name}`;
+        summary.textContent = folder.name;
+
+        summary.onclick = () => {
+            toggleFolder(folder.id);
+        };
 
         details.appendChild(summary);
 
         folder.notes.forEach(note => {
 
             const div = document.createElement("div");
-
-            div.className = "note";
+            div.className = "noteItem";
             div.textContent = "📄 " + note.title;
+
+            div.onclick = () => {
+                openNote(folder.id, note.id);
+            };
 
             details.appendChild(div);
 
         });
 
-        container.appendChild(details);
+        folderList.appendChild(details);
 
     });
 
 }
 
-// 新しいフォルダ
-document.getElementById("newFolder").onclick = () => {
+/* ===== フォルダ開閉 ===== */
 
-    const name = prompt("フォルダ名");
+function toggleFolder(folderId){
 
-    if(!name) return;
+    const folder = state.folders.find(f => f.id === folderId);
 
-    const color = prompt("色を入力\n🟥 🟧 🟨 🟩 🟦 🟪");
+    if(!folder) return;
 
-    folders.push({
+    // 何もしなくてもdetailsが開閉するので将来拡張用
 
-        id: crypto.randomUUID(),
+}
 
-        name,
+/* ===== メモを開く ===== */
 
-        color: color || "⬜",
+function openNote(folderId, noteId){
 
-        notes: []
+    const folder = state.folders.find(f => f.id === folderId);
+    if(!folder) return;
 
-    });
+    const note = folder.notes.find(n => n.id === noteId);
+    if(!note) return;
 
-    saveFolders();
+    state.currentFolderId = folderId;
+    state.currentNoteId = noteId;
 
-    renderFolders();
+    titleInput.value = note.title;
+    contentInput.value = note.content;
 
-};
-
-// 起動
-renderFolders();
+}
