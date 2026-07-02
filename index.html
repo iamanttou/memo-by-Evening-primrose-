@@ -5,40 +5,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PastelMemo</title>
+    <title>Memo by Evening Primrose</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ===== ヘッダー ===== -->
-    <header>
+    <!-- ==========================
+         Header
+    =========================== -->
+
+    <header class="topbar">
 
         <div class="logo">
-            📒 <span>PastelMemo</span>
+            🌙 Memo by <span>Evening Primrose</span>
         </div>
 
-        <div class="searchBox">
+        <div class="topbar-center">
+
             <input
                 id="searchInput"
-                type="text"
-                placeholder="🔍 メモを検索..."
+                type="search"
+                placeholder="検索..."
             >
+
         </div>
 
-        <button id="menuBtn" title="メニュー">
-            ☰
-        </button>
+        <div class="topbar-right">
+
+            <select id="sortSelect">
+
+                <option value="updated">
+                    最近更新
+                </option>
+
+                <option value="created">
+                    作成順
+                </option>
+
+                <option value="name">
+                    名前順
+                </option>
+
+                <option value="recent">
+                    最近開いた
+                </option>
+
+            </select>
+
+            <button id="menuBtn">
+                ☰
+            </button>
+
+        </div>
 
     </header>
 
-    <!-- ===== メイン ===== -->
+    <!-- ==========================
+         Main
+    =========================== -->
+
     <main>
 
-        <!-- ========================= -->
-        <!-- 左側 編集エリア -->
-        <!-- ========================= -->
+        <!-- ======================
+             Editor
+        ======================= -->
+
         <section id="editor">
 
             <div class="editorHeader">
@@ -47,66 +80,37 @@
                     id="title"
                     type="text"
                     placeholder="タイトル"
-                    maxlength="100"
                 >
 
                 <div class="editorButtons">
-
-                    <button id="newNoteBtn">
-                        ➕ 新しいメモ
-                    </button>
 
                     <button id="favoriteBtn">
                         ⭐
                     </button>
 
                     <button id="pinBtn">
-                <!DOCTYPE html>
-<html lang="ja">
+                        📌
+                    </button>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <button id="imageBtn">
+                        🖼
+                    </button>
 
-    <title>PastelMemo</title>
+                    <button id="drawBtn">
+                        ✏
+                    </button>
 
-    <link rel="stylesheet" href="style.css">
-</head>
+                    <button id="linkBtn">
+                        🔗
+                    </button>
 
-<body>
+                    <button id="tagBtn">
+                        #
+                    </button>
 
-    <!-- ===== ヘッダー ===== -->
-    <header>
-
-        <div class="logo">
-            📒 PastelMemo
-        </div>
-
-        <div class="searchBox">
-            <input id="searchInput" type="text" placeholder="メモを検索...">
-        </div>
-
-        <button id="menuBtn">☰</button>
-
-    </header>
-
-    <!-- ===== メイン ===== -->
-    <main>
-
-        <!-- ===== 左：エディタ ===== -->
-        <section id="editor">
-
-            <div class="editorHeader">
-
-                <input id="title" type="text" placeholder="タイトル">
-
-                <div class="editorButtons">
-
-                    <button id="newNoteBtn">➕</button>
-
-                    <button id="favoriteBtn">⭐</button>
-
-                    <button id="pinBtn">📌</button>
+                    <button id="emojiBtn">
+                        😊
+                    </button>
 
                 </div>
 
@@ -114,27 +118,60 @@
 
             <textarea
                 id="content"
-                placeholder="ここにメモを書こう"
+                placeholder="ここに自由にメモを書こう..."
             ></textarea>
+
+            <div id="thumbnailArea"></div>
 
         </section>
 
-        <!-- ===== 右：フォルダ ===== -->
+        <!-- ======================
+             Sidebar
+        ======================= -->
+
         <aside id="sidebar">
 
-            <div class="sidebarTop">
+            <div id="homeCards">
 
-                <select id="sortSelect">
-                    <option value="name">名前順</option>
-                </select>
+                <div class="homeCard">
+
+                    <h3>📌 ピン留め</h3>
+
+                    <div id="pinnedList"></div>
+
+                </div>
+
+                <div class="homeCard">
+
+                    <h3>🕒 最近開いた</h3>
+
+                    <div id="recentList"></div>
+
+                </div>
+
+                <div class="homeCard">
+
+                    <h3>🎲 おすすめ</h3>
+
+                    <div id="randomNote"></div>
+
+                </div>
 
             </div>
 
-            <div id="folderList"></div>
+            <hr>
+
+            <div id="folderList">
+
+                <!-- JSで生成 -->
+
+            </div>
 
             <div class="sidebarBottom">
 
-                <button id="newFolderBtn">＋ フォルダ追加</button>
+                <button id="newFolderBtn">
+                    ＋ フォルダ追加
+                </button>
 
             </div>
 
@@ -142,7 +179,74 @@
 
     </main>
 
+    <!-- ==========================
+         Hidden Inputs
+    =========================== -->
+
+    <input
+        id="imageInput"
+        type="file"
+        accept="image/*"
+        hidden
+    >
+
+    <!-- ==========================
+         Draw Modal
+    =========================== -->
+
+    <div id="drawModal" class="modal hidden">
+
+        <div class="modalContent">
+
+            <div class="modalHeader">
+
+                <h2>手書きメモ</h2>
+
+                <button id="closeDraw">
+                    ✖
+                </button>
+
+            </div>
+
+            <canvas
+                id="drawCanvas"
+                width="700"
+                height="400"
+            ></canvas>
+
+            <div class="canvasButtons">
+
+                <button id="clearCanvas">
+                    全消し
+                </button>
+
+                <button id="saveCanvas">
+                    保存
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================
+         Toast
+    =========================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    >
+        保存しました
+    </div>
+
+    <!-- ==========================
+         Script
+    =========================== -->
+
     <script src="script.js"></script>
 
 </body>
+
 </html>
