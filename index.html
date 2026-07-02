@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Memo by Evening Primrose</title>
 
     <link rel="stylesheet" href="style.css">
@@ -12,27 +11,28 @@
 
 <body>
 
-    <!-- ==========================
+    <!-- ===========================
          Header
-    =========================== -->
+    ============================ -->
 
     <header class="topbar">
 
         <div class="logo">
-            🌙 Memo by <span>Evening Primrose</span>
+            🌙 <strong>Memo</strong>
+            <span>by Evening Primrose</span>
         </div>
 
-        <div class="topbar-center">
+        <div class="searchArea">
 
             <input
                 id="searchInput"
                 type="search"
-                placeholder="検索..."
+                placeholder="メモ・タグ・フォルダを検索..."
             >
 
         </div>
 
-        <div class="topbar-right">
+        <div class="topButtons">
 
             <select id="sortSelect">
 
@@ -41,7 +41,7 @@
                 </option>
 
                 <option value="created">
-                    作成順
+                    作成日
                 </option>
 
                 <option value="name">
@@ -62,15 +62,15 @@
 
     </header>
 
-    <!-- ==========================
+    <!-- ===========================
          Main
-    =========================== -->
+    ============================ -->
 
-    <main>
+    <main class="layout">
 
-        <!-- ======================
-             Editor
-        ======================= -->
+        <!-- =======================
+             Left Editor
+        ======================== -->
 
         <section id="editor">
 
@@ -82,33 +82,29 @@
                     placeholder="タイトル"
                 >
 
-                <div class="editorButtons">
+                <div class="editorActions">
 
-                    <button id="favoriteBtn">
+                    <button id="favoriteBtn" title="お気に入り">
                         ⭐
                     </button>
 
-                    <button id="pinBtn">
+                    <button id="pinBtn" title="ピン留め">
                         📌
                     </button>
 
-                    <button id="imageBtn">
+                    <button id="imageBtn" title="画像">
                         🖼
                     </button>
 
-                    <button id="drawBtn">
+                    <button id="drawBtn" title="手書き">
                         ✏
                     </button>
 
-                    <button id="linkBtn">
+                    <button id="linkBtn" title="リンク">
                         🔗
                     </button>
 
-                    <button id="tagBtn">
-                        #
-                    </button>
-
-                    <button id="emojiBtn">
+                    <button id="emojiBtn" title="絵文字">
                         😊
                     </button>
 
@@ -118,135 +114,68 @@
 
             <textarea
                 id="content"
-                placeholder="ここに自由にメモを書こう..."
+                placeholder="ここにメモを書こう..."
             ></textarea>
 
-            <div id="thumbnailArea"></div>
+            <div id="attachmentArea">
+
+                <div id="imagePreview"></div>
+
+                <div id="drawingPreview"></div>
+
+            </div>
+
+            <div class="statusBar">
+
+                <span id="saveStatus">
+                    自動保存
+                </span>
+
+                <span id="wordCount">
+                    0文字
+                </span>
+
+            </div>
 
         </section>
 
-        <!-- ======================
-             Sidebar
-        ======================= -->
+        <!-- =======================
+             Right Sidebar
+        ======================== -->
 
         <aside id="sidebar">
 
-            <div id="homeCards">
+            <div class="sidebarHeader">
 
-                <div class="homeCard">
-
-                    <h3>📌 ピン留め</h3>
-
-                    <div id="pinnedList"></div>
-
-                </div>
-
-                <div class="homeCard">
-
-                    <h3>🕒 最近開いた</h3>
-
-                    <div id="recentList"></div>
-
-                </div>
-
-                <div class="homeCard">
-
-                    <h3>🎲 おすすめ</h3>
-
-                    <div id="randomNote"></div>
-
-                </div>
+                <h2>
+                    フォルダ
+                </h2>
 
             </div>
-
-            <hr>
 
             <div id="folderList">
 
-                <!-- JSで生成 -->
+                <!--
+
+                🟥 創作 ▼
+
+                    📄 世界観
+
+                    📄 キャラ
+
+                -->
 
             </div>
 
-            <div class="sidebarBottom">
+            <div class="sidebarFooter">
 
                 <button id="newFolderBtn">
+
                     ＋ フォルダ追加
+
                 </button>
 
             </div>
 
         </aside>
-
-    </main>
-
-    <!-- ==========================
-         Hidden Inputs
-    =========================== -->
-
-    <input
-        id="imageInput"
-        type="file"
-        accept="image/*"
-        hidden
-    >
-
-    <!-- ==========================
-         Draw Modal
-    =========================== -->
-
-    <div id="drawModal" class="modal hidden">
-
-        <div class="modalContent">
-
-            <div class="modalHeader">
-
-                <h2>手書きメモ</h2>
-
-                <button id="closeDraw">
-                    ✖
-                </button>
-
-            </div>
-
-            <canvas
-                id="drawCanvas"
-                width="700"
-                height="400"
-            ></canvas>
-
-            <div class="canvasButtons">
-
-                <button id="clearCanvas">
-                    全消し
-                </button>
-
-                <button id="saveCanvas">
-                    保存
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ==========================
-         Toast
-    =========================== -->
-
-    <div
-        id="toast"
-        class="toast"
-    >
-        保存しました
-    </div>
-
-    <!-- ==========================
-         Script
-    =========================== -->
-
-    <script src="script.js"></script>
-
-</body>
-
-</html>
+        
