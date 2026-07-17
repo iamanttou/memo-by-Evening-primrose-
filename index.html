@@ -1,181 +1,161 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo by Evening Primrose</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastel Memo</title>
 
-    <link rel="stylesheet" href="style.css">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Yu Gothic UI",sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#FFE8F1,#E8F7FF,#F7F6D9);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:90%;
+    max-width:700px;
+    background:white;
+    border-radius:25px;
+    padding:30px;
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+}
+
+h1{
+    text-align:center;
+    color:#6A7FB5;
+    margin-bottom:20px;
+}
+
+.input-area{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+textarea{
+    flex:1;
+    height:80px;
+    border:none;
+    border-radius:15px;
+    background:#F8F8FF;
+    padding:15px;
+    resize:none;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    background:#A7D8FF;
+    color:white;
+    border:none;
+    padding:15px 20px;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.2s;
+}
+
+button:hover{
+    background:#88C9FF;
+    transform:translateY(-2px);
+}
+
+.memo{
+    background:#FFF9D8;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    word-break:break-word;
+}
+
+.memo:nth-child(even){
+    background:#EAF8FF;
+}
+
+.memo:nth-child(3n){
+    background:#FFEAF4;
+}
+
+.delete{
+    background:#FFB6C1;
+    padding:8px 12px;
+    border-radius:10px;
+}
+
+.delete:hover{
+    background:#FF98AE;
+}
+</style>
 </head>
 
 <body>
 
-    <!-- ===========================
-         Header
-    ============================ -->
+<div class="container">
+    <h1>🌸 Pastel Memo</h1>
 
-    <header class="topbar">
+    <div class="input-area">
+        <textarea id="text" placeholder="メモを書こう..."></textarea>
+        <button onclick="addMemo()">追加</button>
+    </div>
 
-        <div class="logo">
-            🌙 <strong>Memo</strong>
-            <span>by Evening Primrose</span>
-        </div>
+    <div id="list"></div>
+</div>
 
-        <div class="searchArea">
+<script>
+let memos = JSON.parse(localStorage.getItem("pastelMemo")) || [];
 
-            <input
-                id="searchInput"
-                type="search"
-                placeholder="メモ・タグ・フォルダを検索..."
-            >
+function save(){
+    localStorage.setItem("pastelMemo",JSON.stringify(memos));
+}
 
-        </div>
+function display(){
+    const list=document.getElementById("list");
+    list.innerHTML="";
 
-        <div class="topButtons">
+    memos.forEach((memo,index)=>{
+        const div=document.createElement("div");
+        div.className="memo";
 
-            <select id="sortSelect">
+        div.innerHTML=`
+            <span>${memo}</span>
+            <button class="delete" onclick="removeMemo(${index})">削除</button>
+        `;
 
-                <option value="updated">
-                    最近更新
-                </option>
+        list.appendChild(div);
+    });
+}
 
-                <option value="created">
-                    作成日
-                </option>
+function addMemo(){
+    const text=document.getElementById("text");
+    if(text.value.trim()=="") return;
 
-                <option value="name">
-                    名前順
-                </option>
+    memos.unshift(text.value);
+    text.value="";
+    save();
+    display();
+}
 
-                <option value="recent">
-                    最近開いた
-                </option>
+function removeMemo(index){
+    memos.splice(index,1);
+    save();
+    display();
+}
 
-            </select>
+display();
+</script>
 
-            <button id="menuBtn">
-                ☰
-            </button>
-
-        </div>
-
-    </header>
-
-    <!-- ===========================
-         Main
-    ============================ -->
-
-    <main class="layout">
-
-        <!-- =======================
-             Left Editor
-        ======================== -->
-
-        <section id="editor">
-
-            <div class="editorHeader">
-
-                <input
-                    id="title"
-                    type="text"
-                    placeholder="タイトル"
-                >
-
-                <div class="editorActions">
-
-                    <button id="favoriteBtn" title="お気に入り">
-                        ⭐
-                    </button>
-
-                    <button id="pinBtn" title="ピン留め">
-                        📌
-                    </button>
-
-                    <button id="imageBtn" title="画像">
-                        🖼
-                    </button>
-
-                    <button id="drawBtn" title="手書き">
-                        ✏
-                    </button>
-
-                    <button id="linkBtn" title="リンク">
-                        🔗
-                    </button>
-
-                    <button id="emojiBtn" title="絵文字">
-                        😊
-                    </button>
-
-                </div>
-
-            </div>
-
-            <textarea
-                id="content"
-                placeholder="ここにメモを書こう..."
-            ></textarea>
-
-            <div id="attachmentArea">
-
-                <div id="imagePreview"></div>
-
-                <div id="drawingPreview"></div>
-
-            </div>
-
-            <div class="statusBar">
-
-                <span id="saveStatus">
-                    自動保存
-                </span>
-
-                <span id="wordCount">
-                    0文字
-                </span>
-
-            </div>
-
-        </section>
-
-        <!-- =======================
-             Right Sidebar
-        ======================== -->
-
-        <aside id="sidebar">
-
-            <div class="sidebarHeader">
-
-                <h2>
-                    フォルダ
-                </h2>
-
-            </div>
-
-            <div id="folderList">
-
-                <!--
-
-                🟥 創作 ▼
-
-                    📄 世界観
-
-                    📄 キャラ
-
-                -->
-
-            </div>
-
-            <div class="sidebarFooter">
-
-                <button id="newFolderBtn">
-
-                    ＋ フォルダ追加
-
-                </button>
-
-            </div>
-
-        </aside>
-        
+</body>
+</html>
