@@ -1,161 +1,99 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pastel Memo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastel Memo</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Yu Gothic UI",sans-serif;
-}
-
-body{
-    background:linear-gradient(135deg,#FFE8F1,#E8F7FF,#F7F6D9);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.container{
-    width:90%;
-    max-width:700px;
-    background:white;
-    border-radius:25px;
-    padding:30px;
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
-}
-
-h1{
-    text-align:center;
-    color:#6A7FB5;
-    margin-bottom:20px;
-}
-
-.input-area{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-textarea{
-    flex:1;
-    height:80px;
-    border:none;
-    border-radius:15px;
-    background:#F8F8FF;
-    padding:15px;
-    resize:none;
-    font-size:16px;
-    outline:none;
-}
-
-button{
-    background:#A7D8FF;
-    color:white;
-    border:none;
-    padding:15px 20px;
-    border-radius:15px;
-    cursor:pointer;
-    font-size:16px;
-    transition:.2s;
-}
-
-button:hover{
-    background:#88C9FF;
-    transform:translateY(-2px);
-}
-
-.memo{
-    background:#FFF9D8;
-    border-radius:15px;
-    padding:15px;
-    margin-bottom:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    word-break:break-word;
-}
-
-.memo:nth-child(even){
-    background:#EAF8FF;
-}
-
-.memo:nth-child(3n){
-    background:#FFEAF4;
-}
-
-.delete{
-    background:#FFB6C1;
-    padding:8px 12px;
-    border-radius:10px;
-}
-
-.delete:hover{
-    background:#FF98AE;
-}
-</style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
-    <h1>🌸 Pastel Memo</h1>
+    <!-- ヘッダー -->
+    <header>
+        <h1>🌸 Pastel Memo</h1>
+    </header>
 
-    <div class="input-area">
-        <textarea id="text" placeholder="メモを書こう..."></textarea>
-        <button onclick="addMemo()">追加</button>
-    </div>
+    <main class="container">
 
-    <div id="list"></div>
-</div>
+        <!-- 左側：編集画面 -->
+        <section class="editor">
 
-<script>
-let memos = JSON.parse(localStorage.getItem("pastelMemo")) || [];
+            <input
+                type="text"
+                id="title"
+                placeholder="タイトル"
+            >
 
-function save(){
-    localStorage.setItem("pastelMemo",JSON.stringify(memos));
-}
+            <div class="info">
+                <span id="createdAt">作成日：-</span>
+                <span id="updatedAt">更新日：-</span>
+            </div>
 
-function display(){
-    const list=document.getElementById("list");
-    list.innerHTML="";
+            <textarea
+                id="content"
+                placeholder="ここにメモを書いてね。
 
-    memos.forEach((memo,index)=>{
-        const div=document.createElement("div");
-        div.className="memo";
+例
+今日は数学を勉強した。
+#勉強 #数学"
+            ></textarea>
 
-        div.innerHTML=`
-            <span>${memo}</span>
-            <button class="delete" onclick="removeMemo(${index})">削除</button>
-        `;
+            <div class="editor-buttons">
+                <button id="newBtn">＋ 新規メモ</button>
+                <button id="deleteBtn">🗑 削除</button>
+            </div>
 
-        list.appendChild(div);
-    });
-}
+        </section>
 
-function addMemo(){
-    const text=document.getElementById("text");
-    if(text.value.trim()=="") return;
+        <!-- 右側：サイドバー -->
+        <aside class="sidebar">
 
-    memos.unshift(text.value);
-    text.value="";
-    save();
-    display();
-}
+            <!-- タグ -->
+            <section class="tags">
 
-function removeMemo(index){
-    memos.splice(index,1);
-    save();
-    display();
-}
+                <h2>🏷 タグ</h2>
 
-display();
-</script>
+                <div id="tagList">
+                    <!-- JavaScriptで生成 -->
+                </div>
+
+            </section>
+
+            <!-- メモ一覧 -->
+            <section class="memo-list">
+
+                <h2>📝 メモ一覧</h2>
+
+                <div id="memoList">
+                    <!-- JavaScriptで生成 -->
+                </div>
+
+            </section>
+
+        </aside>
+
+    </main>
+
+    <!-- テンプレート -->
+    <template id="memoTemplate">
+
+        <div class="memo-card">
+
+            <h3 class="memo-title"></h3>
+
+            <p class="memo-preview"></p>
+
+            <div class="memo-tags"></div>
+
+            <small class="memo-date"></small>
+
+        </div>
+
+    </template>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
