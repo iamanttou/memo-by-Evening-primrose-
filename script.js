@@ -78,19 +78,12 @@ function createMemo(){
     const now = new Date().toISOString();
 
     const memo = {
-
         id: Date.now().toString(),
-
         title: "無題",
-
         content: "",
-
         tags: [],
-
         createdAt: now,
-
         updatedAt: now
-
     };
 
     memos.unshift(memo);
@@ -101,10 +94,12 @@ function createMemo(){
 
     renderMemoList();
     renderTags();
-    loadMemo(memo.id);
+    loadMemo(currentMemoId);
+
+    titleInput.focus();
+    titleInput.select();
 
 }
-
 // --------------------
 // メモ取得
 // --------------------
