@@ -90,14 +90,16 @@ function createMemo(){
 
     currentMemoId = memo.id;
 
-    saveData();
+saveData();
 
-    renderMemoList();
-    renderTags();
-    loadMemo(currentMemoId);
+renderMemoList();
+renderTags();
 
-    titleInput.focus();
-    titleInput.select();
+setTimeout(()=>{
+    loadMemo(memo.id);
+}, 0);
+
+titleInput.focus();
 
 }
 
