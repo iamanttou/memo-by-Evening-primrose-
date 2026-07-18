@@ -100,6 +100,7 @@ function createMemo(){
     titleInput.select();
 
 }
+
 // --------------------
 // メモ取得
 // --------------------
